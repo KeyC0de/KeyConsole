@@ -21,13 +21,13 @@
     <ClCompile Include="console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="assertions_console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="leak_checker_console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="os_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,13 +38,13 @@
     <ClInclude Include="winner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="assertions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="leak_checker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

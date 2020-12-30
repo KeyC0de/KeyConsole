@@ -1,11 +1,10 @@
 #pragma once
 
-#include <sdkddkver.h>	// applies default values to windows defines, 
-						//	unless some are already defined (eg _WIN32_WINNT)
 #undef _WIN32_WINNT
 #undef NTDDI_VERSION
 #define _WIN32_WINNT _WIN32_WINNT_WINBLUE
 #define NTDDI_VERSION NTDDI_WINBLUE
+#include <sdkddkver.h>
 
 #ifndef _MSC_VER
 static_assert( false, "Non Windows Platform - Nah huh\n" );
@@ -44,7 +43,8 @@ static_assert( false, "Non Windows Platform - Nah huh\n" );
 #	define NOSERVICE				// All SERVICE_ Controller routines
 //#	define NOSOUND					// Sound driver routines
 #	define NOIMAGE					// 
-#	define NOTEXTMETRIC				// typedef TEXTMETRIC and associated routines
+//#	define NOTEXTMETRIC				// typedef TEXTMETRIC and associated routines
+									// required by atlbase.h
 #	define NOWH						// SetWindowsHook and WH_*
 #	define NOWINOFFSETS				// GWL_*, GCL_*, associated routines
 #	define NOCOMM					// No serial communication API & driver routines

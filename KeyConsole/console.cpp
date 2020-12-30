@@ -2,7 +2,7 @@
 #include <io.h>
 #include <fcntl.h>
 #include "console.h"
-#include "util.h"
+#include "os_utils.h"
 
 
 DWORD KeyConsole::getFontFamily( HANDLE h )
