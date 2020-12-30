@@ -12,7 +12,7 @@ int WINAPI wWinMain(
 	_In_ wchar_t* lpCmdLine,
 	_In_ int nShowCmd )
 {
-	/// \brief The usual Windows code
+	// The usual Windows code
 	UNREFERENCED_PARAMETER( hPrevInstance );
 
 	KeyConsole& console = KeyConsole::getInstance();
