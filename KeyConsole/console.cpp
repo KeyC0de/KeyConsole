@@ -121,7 +121,7 @@ DWORD KeyConsole::print( const std::wstring& msg )
 	DWORD nWritten = 0;
 	auto ret = WriteConsoleW( m_stdHandle,
 		msg.c_str(),
-		msg.length(),
+		static_cast<DWORD>( msg.length() ),
 		&nWritten,
 		nullptr );
 	if ( !ret )
@@ -143,7 +143,7 @@ DWORD KeyConsole::log( const std::wstring& msg )
 	DWORD nWritten = 0;
 	auto ret = WriteConsoleW( m_stdHandle,
 		msg.c_str(),
-		msg.length(),
+		static_cast<DWORD>( msg.length() ),
 		&nWritten,
 		nullptr );
 	if ( !ret )
@@ -174,7 +174,7 @@ DWORD KeyConsole::log( const std::wstring& msg )
 
 std::wstring KeyConsole::read( const uint32_t bytesToAllocate )
 {
-	m_hMode == stdin;
+	m_hMode = stdin;
 	m_fp = freopen( "CONIN$",
 		"w",
 		m_hMode );
@@ -294,6 +294,17 @@ bool KeyConsole::closeConsole()
 
 KeyConsole& KeyConsole::getInstance() noexcept 
 {
-	static KeyConsole instance;
-	return instance;
+	if ( m_instance == nullptr )
+	{
+		m_instance = new KeyConsole;
+	}
+	return *m_instance;
+}
+
+void KeyConsole::resetInstance()
+{
+	if ( m_instance != nullptr )
+	{
+		delete m_instance;
+	}
 }

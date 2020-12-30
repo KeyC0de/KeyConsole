@@ -21,18 +21,19 @@ public:
 		console.log( L"Memory leak checker setup\n" );
 		setupLeakChecker();
 	}
+
 	~LeakChecker()
 	{
-		KeyConsole& console = KeyConsole::getInstance();
 		if ( anyMemoryLeaks() )
 		{
-			console.log( L"Leaking..\n" );
+			OutputDebugStringW( L"Leaking..\n" );
 		}
 		else
 		{
-			console.log( L"No leaks. : )\n" );
+			OutputDebugStringW( L"No leaks. : )\n" );
 		}
 	}
+	
 	static inline void setupLeakChecker()
 	{
 		_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF

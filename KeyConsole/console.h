@@ -25,6 +25,7 @@ class KeyConsole
 	DWORD m_con;			// HANDLE
 	FILE* m_hMode;			// set this when you print/log/read to stdout/stderr/stdin
 	HANDLE m_stdHandle;		// the handle to the console
+	static inline KeyConsole* m_instance;
 private:
 	KeyConsole( const std::wstring& fontName = L"Lucida Console" );
 public:
@@ -38,6 +39,12 @@ public:
 	bool closeConsole();
 
 	static KeyConsole& getInstance() noexcept;
+	//===================================================
+	//	\function	~KeyConsole
+	//	\brief  you must call this prior to program termination to help the leaker checker
+	//	\date	2020/12/30 22:19
+	static void resetInstance();
+		
 	int getConsoleMode() const noexcept;
 	std::wstring getConsoleModeStr() const noexcept;
 	uint32_t getConsoleCodePage() const noexcept;

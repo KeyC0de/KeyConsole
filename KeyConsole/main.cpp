@@ -35,6 +35,8 @@ Whatever man. Console output works.\n" );
 		+ std::to_wstring( readText.length() )
 		+ L" characters.\n" );
 	console.print( L"Console mode is: " + console.getConsoleModeStr() + L'\n');
+
+	console.resetInstance();
 	std::system( "pause" );
 	return 0;
 }
