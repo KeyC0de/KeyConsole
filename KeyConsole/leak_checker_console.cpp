@@ -6,7 +6,7 @@
 //#define _ITERATOR_DEBUG_LEVEL 1	// enabled (if _SECURE_SCL is defined)
 //#define _ITERATOR_DEBUG_LEVEL 2	// enabled (for debug builds)
 
-#	include "leak_checker.h"
+#	include "leak_checker_console.h"
 #	include "console.h"
 
 namespace debugLeak

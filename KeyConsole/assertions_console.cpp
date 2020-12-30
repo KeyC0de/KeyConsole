@@ -1,4 +1,4 @@
-#include "assertions.h"
+#include "assertions_console.h"
 #include "console.h"
 
 #if defined _DEBUG && !defined _NDEBUG

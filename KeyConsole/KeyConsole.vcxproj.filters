@@ -38,13 +38,13 @@
     <ClInclude Include="winner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="assertions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="leak_checker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="os_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assertions_console.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="leak_checker_console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

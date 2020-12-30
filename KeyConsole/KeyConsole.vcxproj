@@ -137,9 +137,9 @@
     <ClCompile Include="os_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="assertions.h" />
+    <ClInclude Include="assertions_console.h" />
     <ClInclude Include="console.h" />
-    <ClInclude Include="leak_checker.h" />
+    <ClInclude Include="leak_checker_console.h" />
     <ClInclude Include="os_utils.h" />
     <ClInclude Include="winner.h" />
   </ItemGroup>

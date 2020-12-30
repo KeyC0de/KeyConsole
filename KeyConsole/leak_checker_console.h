@@ -4,7 +4,7 @@
 #	define _CRTDBG_MAP_ALLOC
 #	define _CRTDBG_MAP_ALLOC_NEW
 #	include <crtdbg.h>
-#	include "assertions.h"
+#	include "assertions_console.h"
 
 namespace debugLeak
 {
