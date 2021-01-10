@@ -1,6 +1,4 @@
 #include <iostream>
-#include <string>
-#include "winner.h"
 #include "console.h"
 
 #pragma comment( linker, "/SUBSYSTEM:WINDOWS" )

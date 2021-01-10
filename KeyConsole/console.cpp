@@ -1,6 +1,4 @@
 #include <iostream>
-#include <io.h>
-#include <fcntl.h>
 #include "console.h"
 #include "os_utils.h"
 #include "utils.h"
