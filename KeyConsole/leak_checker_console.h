@@ -5,6 +5,7 @@
 #	define _CRTDBG_MAP_ALLOC_NEW
 #	include <crtdbg.h>
 #	include "assertions_console.h"
+#	include "winner.h"
 
 namespace debugLeak
 {
@@ -12,7 +13,8 @@ namespace debugLeak
 bool anyMemoryLeaks()
 {
 	// confirms integrity of memory blocks allocated by debug heap
-	ASSERT( _CrtCheckMemory() == TRUE, L"_CrtCheckMemory() assertion failed\n" );
+	ASSERT( _CrtCheckMemory() == TRUE,
+		"_CrtCheckMemory() assertion failed\n" );
 	if ( _CrtDumpMemoryLeaks() )
 	{
 		return true;

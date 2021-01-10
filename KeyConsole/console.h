@@ -3,6 +3,7 @@
 #include "winner.h"
 #include <string>
 
+
 //============================================================
 //	\class	KeyConsole
 //
@@ -16,18 +17,18 @@
 //=============================================================
 class KeyConsole
 {
-	static inline constexpr const wchar_t* currentVersion = L"v0.1";
-	static inline constexpr const wchar_t* defaultConsoleTitle =
-		L"KeyEngine Debug Console - ";
+	static inline constexpr const char* currentVersion = "v0.1";
+	static inline constexpr const char* defaultConsoleTitle =
+		"KeyEngine Debug Console - ";
 
 	FILE* m_fp;
-	std::wstring m_title;
+	std::string m_title;
 	DWORD m_con;			// HANDLE
 	FILE* m_hMode;			// set this when you print/log/read to stdout/stderr/stdin
 	HANDLE m_stdHandle;		// the handle to the console
 	static inline KeyConsole* m_instance;
 private:
-	KeyConsole( const std::wstring& fontName = L"Lucida Console" );
+	KeyConsole( const std::string& fontName = "Lucida Console" );
 public:
 	KeyConsole( const KeyConsole& rhs ) = delete;
 	KeyConsole& operator=( const KeyConsole& rhs ) = delete;
@@ -46,29 +47,29 @@ public:
 	static void resetInstance();
 		
 	int getConsoleMode() const noexcept;
-	std::wstring getConsoleModeStr() const noexcept;
+	std::string getConsoleModeStr() const noexcept;
 	uint32_t getConsoleCodePage() const noexcept;
 	HANDLE getStdHandle() const noexcept;
 
 	int32_t setConsoleCodePage( uint32_t cp );
-	void setFont( const std::wstring& fontName );
+	void setFont( const std::string& fontName );
 	int32_t setCurcorPos( _COORD xy = { 0,0 } );
 
 	//===================================================
 	//	\function	print
 	//	\brief  print to stdout
 	//	\date	2020/12/01 21:36
-	DWORD print( const std::wstring& msg );
+	DWORD print( const std::string& msg );
 	//===================================================
 	//	\function	log
 	//	\brief  print to stderr
 	//	\date	2020/12/01 21:36
-	DWORD log( const std::wstring& msg );
+	DWORD log( const std::string& msg );
 	//===================================================
 	//	\function	read
 	//	\brief  read from stdin, returns the string
 	//	\date	2020/12/01 21:36
-	std::wstring read( const uint32_t bytesToAllocate = 128u );
+	std::string read( const uint32_t bytesToAllocate = 128u );
 
 	inline bool operator==( const KeyConsole& rhs ) const noexcept
 	{

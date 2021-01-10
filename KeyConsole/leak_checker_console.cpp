@@ -18,7 +18,7 @@ public:
 	LeakChecker()
 	{
 		KeyConsole& console = KeyConsole::getInstance();
-		console.log( L"Memory leak checker setup\n" );
+		console.log( "Memory leak checker setup\n" );
 		setupLeakChecker();
 	}
 

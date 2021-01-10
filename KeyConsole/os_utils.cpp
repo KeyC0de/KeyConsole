@@ -1,38 +1,14 @@
 #include "os_utils.h"
+#include "utils.h"
 
-std::wstring printHresultErrorDescription( HRESULT hres )
+
+std::string printHresultErrorDescription( HRESULT hres )
 {
 	_com_error error( hres );
-	return error.ErrorMessage();
+	return ws2s( error.ErrorMessage() );
 }
 
-#ifdef _UNICODE
-std::wstring getLastErrorAsStringW()
-{
-	//Get the error message, if any.
-	DWORD errorMsgId = ::GetLastError();
-	if ( errorMsgId == 0 )
-	{
-		return std::wstring{L""}; // no recorded error messages
-	}
-
-	wchar_t buff[256];
-	size_t size = FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM
-		| FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr,
-		errorMsgId,
-		MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-		buff,
-		( sizeof( buff ) / sizeof( wchar_t ) ),
-		nullptr );
-
-	std::wstring message( buff,
-		size );
-	LocalFree( buff );	// Free the buffer.
-	return message;
-}
-#else
-std::string getLastErrorAsStringA()
+std::string getLastErrorAsString()
 {
 	//Get the error message, if any.
 	DWORD errorMsgId = ::GetLastError();
@@ -56,11 +32,10 @@ std::string getLastErrorAsStringA()
 	LocalFree( buff) ;
 	return message;
 }
-#endif
 
-int32_t fileExists( std::wstring path )
+int32_t fileExists( std::string path )
 {
-	uint32_t attribs = GetFileAttributesW( path.c_str() );
+	uint32_t attribs = GetFileAttributesW( s2ws( path ).data() );
 	return ( attribs != INVALID_FILE_ATTRIBUTES
 		&& !( attribs & FILE_ATTRIBUTE_DIRECTORY ) );
 }

@@ -17,24 +17,24 @@ int WINAPI wWinMain(
 
 	KeyConsole& console = KeyConsole::getInstance();
 
-	auto nW = console.log( L"Using the log function\
+	auto nW = console.log( "Using the log function\
 Whatever man. Console output works.\n" );
-	console.print( L"Console mode is: " + console.getConsoleModeStr() + L'\n');
+	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
 	printf( "using printf\nA quick brown fox jumps over the lazy dog\n" );
-	console.print( L"Console mode is: " + console.getConsoleModeStr() + L'\n');
-	std::wcout << nW << L" characters written\n" << L'\n';
-	std::wcout << L"Using wcout\n\t\t\t all good it seems" << L'\n';
-	console.print( L"Console mode is: " + console.getConsoleModeStr() + L'\n');
-	console.print( L"Using the print function - all good\n" );
-	console.print( L"about to use console.read.." );
+	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
+	std::cout << nW << " characters written\n" << '\n';
+	std::cout << "Using cout\n\t\t\t all good it seems" << '\n';
+	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
+	console.print( "Using the print function - all good\n" );
+	console.print( "about to use console.read.." );
 	auto readText = console.read();
-	console.print( L"Console mode is: " + console.getConsoleModeStr() + L'\n');
-	console.print( L"Read: "
+	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
+	console.print( "Read: "
 		+ readText
-		+ L"\nConsisting of "
-		+ std::to_wstring( readText.length() )
-		+ L" characters.\n" );
-	console.print( L"Console mode is: " + console.getConsoleModeStr() + L'\n');
+		+ "\nConsisting of "
+		+ std::to_string( readText.length() )
+		+ " characters.\n" );
+	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
 
 	console.resetInstance();
 	std::system( "pause" );

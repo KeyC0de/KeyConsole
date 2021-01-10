@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include "console.h"
 #include "os_utils.h"
+#include "utils.h"
 
 
 DWORD KeyConsole::getFontFamily( HANDLE h )
@@ -11,14 +12,14 @@ DWORD KeyConsole::getFontFamily( HANDLE h )
 	BOOL conFont = GetCurrentConsoleFont( h,
 		false,
 		&cfi );
-	std::wcout << conFont
-		<< L"\nnFont="
+	std::cout << conFont
+		<< "\nnFont="
 		<< cfi.nFont
-		<< L"fontSize=("
+		<< "fontSize=("
 		<< cfi.dwFontSize.X
-		<< L','
+		<< ','
 		<< cfi.dwFontSize.Y
-		<< L")\n";
+		<< ")\n";
 	return conFont ? cfi.nFont
 		: -1;
 }
@@ -26,27 +27,27 @@ DWORD KeyConsole::getFontFamily( HANDLE h )
 void KeyConsole::getConsoleInfo( HANDLE h )
 {
 	using GETNUMBEROFCONSOLEFONTS = DWORD (WINAPI* )();
-    using SETCONSOLEFONT = BOOL (WINAPI*)( HANDLE hConOut, DWORD nFont );
+	using SETCONSOLEFONT = BOOL (WINAPI*)( HANDLE hConOut, DWORD nFont );
 	auto GetNumberOfConsoleFonts =
 		(GETNUMBEROFCONSOLEFONTS) GetProcAddress( LoadLibraryW( L"KERNEL32" ),
 		"GetNumberOfConsoleFonts" );
-    auto SetConsoleFont = (SETCONSOLEFONT) GetProcAddress( LoadLibraryW( L"KERNEL32" ),
+	auto SetConsoleFont = (SETCONSOLEFONT) GetProcAddress( LoadLibraryW( L"KERNEL32" ),
 		"SetConsoleFont" );
 	auto font = getFontFamily( h );
-	std::wcout << L"nConsoleFonts="
+	std::cout << "nConsoleFonts="
 		<< GetNumberOfConsoleFonts()
-		<< L"fontName="
+		<< "fontName="
 		<< font
-		<< L'\n';
+		<< '\n';
 }
 
 
-KeyConsole::KeyConsole( const std::wstring& fontName )
+KeyConsole::KeyConsole( const std::string& fontName )
 	:
 	m_fp{nullptr},
-	m_title{std::wstring{ defaultConsoleTitle }
-		+ std::wstring{ L" " }
-		+ std::wstring{ currentVersion }},
+	m_title{std::string{ defaultConsoleTitle }
+		+ std::string{ " " }
+		+ std::string{ currentVersion }},
 	m_con{STD_OUTPUT_HANDLE},
 	m_hMode{stdout},
 	m_stdHandle{GetStdHandle( m_con )}
@@ -57,13 +58,13 @@ KeyConsole::KeyConsole( const std::wstring& fontName )
 	if ( !AllocConsole() )
 	{
 		MessageBoxW( nullptr,
-			L"Unable to create Debug Console.",
-			L"Notice",
+			s2ws( "Unable to create Debug Console." ).data(),
+			s2ws( "Notice" ).data(),
 			MB_ICONEXCLAMATION );
 	}
 	
 	// 2. set console title
-	SetConsoleTitleW( m_title.c_str() );
+	SetConsoleTitleW( s2ws( m_title ).data() );
 
 	// 3. set the console codepage to UTF-8 UNICODE
 	if ( !IsValidCodePage( CP_UTF8 ) )
@@ -87,9 +88,9 @@ KeyConsole::KeyConsole( const std::wstring& fontName )
 	setFont( fontName );
 
 	// 5. set file stream translation mode - wide character 16Bit Text
-	_setmode( _fileno( stdout ), _O_U16TEXT );
-	_setmode( _fileno( stderr ), _O_U16TEXT );
-	_setmode( _fileno( stdin ), _O_U16TEXT );
+	//_setmode( _fileno( stdout ), _O_U16TEXT );
+	//_setmode( _fileno( stderr ), _O_U16TEXT );
+	//_setmode( _fileno( stdin ), _O_U16TEXT );
 	// use w-streams for interaction with the console
 	// Remember no mix and match streams!
 	// use regular streams for interaction with files
@@ -98,10 +99,10 @@ KeyConsole::KeyConsole( const std::wstring& fontName )
 	// 6. console startup info..
 	SetConsoleTextAttribute( m_stdHandle,
 		FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
-	print( L"Console attributes set.\n" );
-	print( L"Console mode set to " + getConsoleModeStr() + L'\n' );
-	print( L"Console ready.\n\n" );
-	std::wcout.clear();	// after this one we are ready to print
+	print( "Console attributes set.\n" );
+	print( "Console mode set to " + getConsoleModeStr() + '\n' );
+	print( "Console ready.\n\n" );
+	std::cout.clear();	// after this one we are ready to print
 }
 
 KeyConsole::~KeyConsole()
@@ -109,7 +110,7 @@ KeyConsole::~KeyConsole()
 	closeConsole();
 }
 
-DWORD KeyConsole::print( const std::wstring& msg )
+DWORD KeyConsole::print( const std::string& msg )
 {
 	m_hMode = stdout;
 	m_fp = freopen( "CONOUT$",
@@ -119,7 +120,7 @@ DWORD KeyConsole::print( const std::wstring& msg )
 	m_stdHandle = GetStdHandle( m_con );
 
 	DWORD nWritten = 0;
-	auto ret = WriteConsoleW( m_stdHandle,
+	auto ret = WriteConsoleA( m_stdHandle,
 		msg.c_str(),
 		static_cast<DWORD>( msg.length() ),
 		&nWritten,
@@ -131,7 +132,7 @@ DWORD KeyConsole::print( const std::wstring& msg )
 	return nWritten;
 }
 
-DWORD KeyConsole::log( const std::wstring& msg )
+DWORD KeyConsole::log( const std::string& msg )
 {
 	m_hMode = stderr;
 	m_fp = freopen( "CONERR$",
@@ -141,7 +142,7 @@ DWORD KeyConsole::log( const std::wstring& msg )
 	m_stdHandle = GetStdHandle( m_con );
 
 	DWORD nWritten = 0;
-	auto ret = WriteConsoleW( m_stdHandle,
+	auto ret = WriteConsoleA( m_stdHandle,
 		msg.c_str(),
 		static_cast<DWORD>( msg.length() ),
 		&nWritten,
@@ -172,7 +173,7 @@ DWORD KeyConsole::log( const std::wstring& msg )
 	*/
 }
 
-std::wstring KeyConsole::read( const uint32_t bytesToAllocate )
+std::string KeyConsole::read( const uint32_t bytesToAllocate )
 {
 	m_hMode = stdin;
 	m_fp = freopen( "CONIN$",
@@ -182,7 +183,7 @@ std::wstring KeyConsole::read( const uint32_t bytesToAllocate )
 	m_stdHandle = GetStdHandle( m_con );
 
 	DWORD nRead = 0;
-	std::wstring buff;
+	std::string buff;
 	buff.reserve( bytesToAllocate );
 	auto ret = ReadConsoleW( m_stdHandle,
 		buff.data(),
@@ -193,7 +194,7 @@ std::wstring KeyConsole::read( const uint32_t bytesToAllocate )
 	{
 		ASSERT_HRES_IF_FAILED_( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
-	return std::wstring( buff );
+	return std::string( buff );
 }
 
 int KeyConsole::getConsoleMode() const noexcept
@@ -213,19 +214,19 @@ int KeyConsole::getConsoleMode() const noexcept
 	return -1;
 }
 
-std::wstring KeyConsole::getConsoleModeStr() const noexcept
+std::string KeyConsole::getConsoleModeStr() const noexcept
 {
-	std::wstring strMode;
+	std::string strMode;
 	switch ( m_con )
 	{
 	case STD_OUTPUT_HANDLE:
-		strMode = L"out";
+		strMode = "out";
 		break;
 	case STD_ERROR_HANDLE:
-		strMode = L"err";
+		strMode = "err";
 		break;
 	case STD_INPUT_HANDLE:
-		strMode = L"in";
+		strMode = "in";
 		break;
 	default:
 		break;
@@ -251,7 +252,7 @@ int32_t KeyConsole::setConsoleCodePage( uint32_t cp )
 	return SetConsoleCP( cp );
 }
 
-void KeyConsole::setFont( const std::wstring& fontName )
+void KeyConsole::setFont( const std::string& fontName )
 {
 	CONSOLE_FONT_INFOEX cfie;
 	const auto sz = sizeof( CONSOLE_FONT_INFOEX );
@@ -262,7 +263,7 @@ void KeyConsole::setFont( const std::wstring& fontName )
 	cfie.FontFamily = FF_DONTCARE;
 	cfie.FontWeight = FW_NORMAL;
 	wcscpy_s( cfie.FaceName,
-		fontName.data() );
+		s2ws( fontName ).data() );
 	SetCurrentConsoleFontEx( m_stdHandle,
 		false,
 		&cfie );
@@ -280,7 +281,7 @@ bool KeyConsole::closeConsole()
 {
 	if ( !FreeConsole() )
 	{
-		print( L"Console closing down" );
+		print( "Console closing down" );
 		MessageBoxW( nullptr,
 			L"Failed to close the console!",
 			L"Console Error",
