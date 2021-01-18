@@ -67,31 +67,22 @@ KeyConsole::KeyConsole( const std::string& fontName )
 	// 3. set the console codepage to UTF-8 UNICODE
 	if ( !IsValidCodePage( CP_UTF8 ) )
 	{
-		auto r = GetLastError();
-		ASSERT_HRES_IF_FAILED_( HRESULT_FROM_WIN32( r ) );
+		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
 	if ( !SetConsoleCP( CP_UTF8 ) )
 	{
-		auto r = GetLastError();
-		ASSERT_HRES_IF_FAILED_( HRESULT_FROM_WIN32( r ) );
+		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
 	if ( !SetConsoleOutputCP( CP_UTF8 ) )
 	{
-		auto r = GetLastError();
-		ASSERT_HRES_IF_FAILED_( HRESULT_FROM_WIN32( r ) );
+		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
 	
 	// 4. use a suitable (console) font that supports our desired glyphs
 	// - post Windows Vista only
 	setFont( fontName );
 
-	// 5. set file stream translation mode - wide character 16Bit Text
-	//_setmode( _fileno( stdout ), _O_U16TEXT );
-	//_setmode( _fileno( stderr ), _O_U16TEXT );
-	//_setmode( _fileno( stdin ), _O_U16TEXT );
-	// use w-streams for interaction with the console
-	// Remember no mix and match streams!
-	// use regular streams for interaction with files
+	// 5. set file stream translation mode
 	std::ios_base::sync_with_stdio( false );
 
 	// 6. console startup info..
@@ -125,7 +116,7 @@ DWORD KeyConsole::print( const std::string& msg )
 		nullptr );
 	if ( !ret )
 	{
-		ASSERT_HRES_IF_FAILED_( HRESULT_FROM_WIN32( GetLastError() ) );
+		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
 	return nWritten;
 }
@@ -147,28 +138,9 @@ DWORD KeyConsole::log( const std::string& msg )
 		nullptr );
 	if ( !ret )
 	{
-		ASSERT_HRES_IF_FAILED_( HRESULT_FROM_WIN32( GetLastError() ) );
+		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
 	return nWritten;
-
-	// _IONBF unbuffered
-	// _IOLBF line buffered
-	// _IOFBF fully buffered
-	// redirect unbuffered STDIN to the console
-	/*
-	stdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
-	fd = _open_osfhandle(stdHandle, _O_TEXT);
-	m_fp = _fdopen(fd, "r");
-	*stdin = *m_fp;
-	setvbuf(stdin, NULL, _IONBF, 0);
-
-	// redirect unbuffered STDERR to the console
-	stdHandle = (long)GetStdHandle(STD_ERROR_HANDLE);
-	fd = _open_osfhandle(stdHandle, _O_TEXT);
-	m_fp = _fdopen(fd, "w");
-	*stderr = *m_fp;
-	setvbuf(stderr, NULL, _IONBF, 0);
-	*/
 }
 
 std::string KeyConsole::read( const uint32_t bytesToAllocate )
@@ -190,7 +162,7 @@ std::string KeyConsole::read( const uint32_t bytesToAllocate )
 		nullptr );
 	if ( !ret )
 	{
-		ASSERT_HRES_IF_FAILED_( HRESULT_FROM_WIN32( GetLastError() ) );
+		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
 	return std::string( buff );
 }
@@ -269,7 +241,7 @@ void KeyConsole::setFont( const std::string& fontName )
 	getConsoleInfo( m_stdHandle );
 }
 
-int32_t KeyConsole::setCurcorPos(_COORD xy /* = { 0,0 } */)
+int32_t KeyConsole::setCurcorPos( _COORD xy /* = { 0,0 } */ )
 {
 	return SetConsoleCursorPosition( m_stdHandle,
 		xy );
@@ -279,7 +251,6 @@ bool KeyConsole::closeConsole()
 {
 	if ( !FreeConsole() )
 	{
-		print( "Console closing down" );
 		MessageBoxW( nullptr,
 			L"Failed to close the console!",
 			L"Console Error",
@@ -293,17 +264,17 @@ bool KeyConsole::closeConsole()
 
 KeyConsole& KeyConsole::getInstance() noexcept 
 {
-	if ( m_instance == nullptr )
+	if ( ms_instance == nullptr )
 	{
-		m_instance = new KeyConsole;
+		ms_instance = new KeyConsole;
 	}
-	return *m_instance;
+	return *ms_instance;
 }
 
 void KeyConsole::resetInstance()
 {
-	if ( m_instance != nullptr )
+	if ( ms_instance != nullptr )
 	{
-		delete m_instance;
+		delete ms_instance;
 	}
 }

@@ -15,9 +15,9 @@
 //			by default set to output mode
 //			the mode is changed dynamically depending on print/log/read operation request
 //=============================================================
-class KeyConsole
+class KeyConsole final
 {
-	static inline constexpr const char* currentVersion = "v0.1";
+	static inline constexpr const char* currentVersion = "v0.4";
 	static inline constexpr const char* defaultConsoleTitle =
 		"KeyEngine Debug Console - ";
 
@@ -26,7 +26,7 @@ class KeyConsole
 	DWORD m_con;			// HANDLE
 	FILE* m_hMode;			// set this when you print/log/read to stdout/stderr/stdin
 	HANDLE m_stdHandle;		// the handle to the console
-	static inline KeyConsole* m_instance;
+	static inline KeyConsole* ms_instance;
 private:
 	KeyConsole( const std::string& fontName = "Lucida Console" );
 public:
@@ -53,7 +53,7 @@ public:
 
 	int32_t setConsoleCodePage( uint32_t cp );
 	void setFont( const std::string& fontName );
-	int32_t setCurcorPos( _COORD xy = { 0,0 } );
+	int32_t setCurcorPos( _COORD xy = {0,0} );
 
 	//===================================================
 	//	\function	print
