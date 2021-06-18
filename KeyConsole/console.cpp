@@ -143,7 +143,7 @@ DWORD KeyConsole::log( const std::string& msg )
 	return nWritten;
 }
 
-std::string KeyConsole::read( const uint32_t bytesToAllocate )
+std::string KeyConsole::read( const uint32_t maxChars )
 {
 	m_hMode = stdin;
 	m_fp = freopen( "CONIN$",
@@ -154,17 +154,19 @@ std::string KeyConsole::read( const uint32_t bytesToAllocate )
 
 	DWORD nRead = 0;
 	std::string buff;
-	buff.reserve( bytesToAllocate );
-	auto ret = ReadConsoleW( m_stdHandle,
+	buff.reserve( maxChars );
+	buff.resize( maxChars );
+	auto ret = ReadConsoleA( m_stdHandle,
 		buff.data(),
-		sizeof( buff ),
+		maxChars,
 		&nRead,
 		nullptr );
+	buff.resize( nRead - 2 );	// removing superfluous size including the size needed for \r\n
 	if ( !ret )
 	{
 		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
 	}
-	return std::string( buff );
+	return buff;
 }
 
 int KeyConsole::getConsoleMode() const noexcept

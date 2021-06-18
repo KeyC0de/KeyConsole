@@ -69,7 +69,7 @@ public:
 	//	\function	read
 	//	\brief  read from stdin, returns the string
 	//	\date	2020/12/01 21:36
-	std::string read( const uint32_t bytesToAllocate = 128u );
+	std::string read( const uint32_t maxChars = 1024u );
 
 	inline bool operator==( const KeyConsole& rhs ) const noexcept
 	{
