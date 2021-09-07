@@ -35,6 +35,5 @@ Whatever man. Console output works.\n" );
 	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
 
 	console.resetInstance();
-	std::system( "pause" );
 	return 0;
 }
