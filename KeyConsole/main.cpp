@@ -1,17 +1,20 @@
 #include <iostream>
 #include "console.h"
+#if defined _DEBUG && !defined NDEBUG
+#	include <vld.h>
+#endif
 
 #pragma comment( linker, "/SUBSYSTEM:WINDOWS" )
 
 
-int WINAPI wWinMain(
-	_In_ HINSTANCE hInstance,
+int WINAPI wWinMain( _In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ wchar_t* lpCmdLine,
 	_In_ int nShowCmd )
 {
-	// The usual Windows code
 	UNREFERENCED_PARAMETER( hPrevInstance );
+	UNREFERENCED_PARAMETER( lpCmdLine );
+	UNREFERENCED_PARAMETER( nShowCmd );
 
 	KeyConsole& console = KeyConsole::getInstance();
 
@@ -21,6 +24,7 @@ Whatever man. Console output works.\n" );
 	printf( "using printf\nA quick brown fox jumps over the lazy dog\n" );
 	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
 	std::cout << nW << " characters written\n" << '\n';
+	console.setColor();
 	std::cout << "Using cout\n\t\t\t all good it seems" << '\n';
 	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
 	console.print( "Using the print function - all good\n" );
@@ -32,6 +36,7 @@ Whatever man. Console output works.\n" );
 		+ "\nConsisting of "
 		+ std::to_string( readText.length() )
 		+ " characters.\n" );
+	console.setColor( console.getConsoleDefaultTextAttributes() );
 	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
 
 	console.resetInstance();

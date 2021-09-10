@@ -1,7 +1,7 @@
 #include "assertions_console.h"
 #include "console.h"
 
-#if defined _DEBUG && !defined _NDEBUG
+#if defined _DEBUG && !defined NDEBUG
 
 #ifdef __cplusplus
 extern "C" {

@@ -18,8 +18,9 @@ DWORD KeyConsole::getFontFamily( HANDLE h )
 		<< ','
 		<< cfi.dwFontSize.Y
 		<< ")\n";
-	return conFont ? cfi.nFont
-		: -1;
+	return conFont ?
+		cfi.nFont :
+		-1;
 }
 
 void KeyConsole::getConsoleInfo( HANDLE h )
@@ -43,12 +44,10 @@ void KeyConsole::getConsoleInfo( HANDLE h )
 KeyConsole::KeyConsole( const std::string& fontName )
 	:
 	m_fp{nullptr},
-	m_title{std::string{ defaultConsoleTitle }
-		+ std::string{ " " }
-		+ std::string{ currentVersion }},
-	m_con{STD_OUTPUT_HANDLE},
+	m_title{std::string{defaultConsoleTitle} + std::string{" "} + std::string{currentVersion}},
+	m_stdDevice{STD_OUTPUT_HANDLE},
 	m_hMode{stdout},
-	m_stdHandle{GetStdHandle( m_con )}
+	m_hConsole{GetStdHandle( m_stdDevice )}
 {
 	fflush( stdout );
 
@@ -67,15 +66,15 @@ KeyConsole::KeyConsole( const std::string& fontName )
 	// 3. set the console codepage to UTF-8 UNICODE
 	if ( !IsValidCodePage( CP_UTF8 ) )
 	{
-		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
 	}
 	if ( !SetConsoleCP( CP_UTF8 ) )
 	{
-		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
 	}
 	if ( !SetConsoleOutputCP( CP_UTF8 ) )
 	{
-		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
 	}
 	
 	// 4. use a suitable (console) font that supports our desired glyphs
@@ -85,12 +84,10 @@ KeyConsole::KeyConsole( const std::string& fontName )
 	// 5. set file stream translation mode
 	std::ios_base::sync_with_stdio( false );
 
-	// 6. console startup info..
-	SetConsoleTextAttribute( m_stdHandle,
-		FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
 	print( "Console attributes set.\n" );
 	print( "Console mode set to " + getConsoleModeStr() + '\n' );
 	print( "Console ready.\n\n" );
+	setDefaultColor();
 	std::cout.clear();	// after this one we are ready to print
 }
 
@@ -105,18 +102,18 @@ DWORD KeyConsole::print( const std::string& msg )
 	m_fp = freopen( "CONOUT$",
 		"w",
 		m_hMode );
-	m_con = STD_OUTPUT_HANDLE;
-	m_stdHandle = GetStdHandle( m_con );
+	m_stdDevice = STD_OUTPUT_HANDLE;
+	m_hConsole = GetStdHandle( m_stdDevice );
 
 	DWORD nWritten = 0;
-	auto ret = WriteConsoleA( m_stdHandle,
+	auto ret = WriteConsoleA( m_hConsole,
 		msg.c_str(),
 		static_cast<DWORD>( msg.length() ),
 		&nWritten,
 		nullptr );
 	if ( !ret )
 	{
-		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
 	}
 	return nWritten;
 }
@@ -127,18 +124,18 @@ DWORD KeyConsole::log( const std::string& msg )
 	m_fp = freopen( "CONERR$",
 			"w",
 			m_hMode );
-	m_con = STD_ERROR_HANDLE;
-	m_stdHandle = GetStdHandle( m_con );
+	m_stdDevice = STD_ERROR_HANDLE;
+	m_hConsole = GetStdHandle( m_stdDevice );
 
 	DWORD nWritten = 0;
-	auto ret = WriteConsoleA( m_stdHandle,
+	auto ret = WriteConsoleA( m_hConsole,
 		msg.c_str(),
 		static_cast<DWORD>( msg.length() ),
 		&nWritten,
 		nullptr );
 	if ( !ret )
 	{
-		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
 	}
 	return nWritten;
 }
@@ -149,14 +146,14 @@ std::string KeyConsole::read( const uint32_t maxChars )
 	m_fp = freopen( "CONIN$",
 		"w",
 		m_hMode );
-	m_con = STD_INPUT_HANDLE;
-	m_stdHandle = GetStdHandle( m_con );
+	m_stdDevice = STD_INPUT_HANDLE;
+	m_hConsole = GetStdHandle( m_stdDevice );
 
 	DWORD nRead = 0;
 	std::string buff;
 	buff.reserve( maxChars );
 	buff.resize( maxChars );
-	auto ret = ReadConsoleA( m_stdHandle,
+	auto ret = ReadConsoleA( m_hConsole,
 		buff.data(),
 		maxChars,
 		&nRead,
@@ -164,7 +161,7 @@ std::string KeyConsole::read( const uint32_t maxChars )
 	buff.resize( nRead - 2 );	// removing superfluous size including the size needed for \r\n
 	if ( !ret )
 	{
-		printHresultErrorDescription( HRESULT_FROM_WIN32( GetLastError() ) );
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
 	}
 	return buff;
 }
@@ -189,7 +186,7 @@ int KeyConsole::getConsoleMode() const noexcept
 std::string KeyConsole::getConsoleModeStr() const noexcept
 {
 	std::string strMode;
-	switch ( m_con )
+	switch ( m_stdDevice )
 	{
 	case STD_OUTPUT_HANDLE:
 		strMode = "out";
@@ -206,18 +203,15 @@ std::string KeyConsole::getConsoleModeStr() const noexcept
 	return strMode;
 }
 
-// get current console's Code Page. for a list of code pages check link:
-// https://docs.microsoft.com/el-gr/windows/desktop/Intl/code-page-identifiers
 uint32_t KeyConsole::getConsoleCodePage() const noexcept
 {
 	return GetConsoleCP();
 }
 
-HANDLE KeyConsole::getStdHandle() const noexcept
+HANDLE KeyConsole::getHandle() const noexcept
 {
-	return m_stdHandle;
+	return m_hConsole;
 }
-
 
 int32_t KeyConsole::setConsoleCodePage( uint32_t cp )
 {
@@ -236,17 +230,61 @@ void KeyConsole::setFont( const std::string& fontName )
 	cfie.FontWeight = FW_NORMAL;
 	wcscpy_s( cfie.FaceName,
 		s2ws( fontName ).data() );
-	SetCurrentConsoleFontEx( m_stdHandle,
+	SetCurrentConsoleFontEx( m_hConsole,
 		false,
 		&cfie );
 
-	getConsoleInfo( m_stdHandle );
+	getConsoleInfo( m_hConsole );
 }
 
 int32_t KeyConsole::setCurcorPos( _COORD xy /* = { 0,0 } */ )
 {
-	return SetConsoleCursorPosition( m_stdHandle,
+	return SetConsoleCursorPosition( m_hConsole,
 		xy );
+}
+
+
+bool KeyConsole::setDefaultColor()
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	BOOL ret = GetConsoleScreenBufferInfo( m_hConsole, &csbi );
+	if ( !ret )
+	{
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
+		return false;
+	}
+	m_consoleAttributesDefault = csbi.wAttributes;
+	return true;
+}
+
+bool KeyConsole::setColor( WORD attributes )
+{
+	BOOL ret = SetConsoleTextAttribute( m_hConsole,
+		attributes );
+	if ( !ret )
+	{
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
+		return false;
+	}
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	ret = GetConsoleScreenBufferInfo( m_hConsole, &csbi );
+	if ( !ret )
+	{
+		OutputDebugStringW( printHresultErrorDescriptionW( HRESULT_FROM_WIN32( GetLastError() ) ).data() );
+		return false;
+	}
+	m_consoleAttributes = csbi.wAttributes;
+	return true;
+}
+
+WORD KeyConsole::getConsoleTextAttributes() const noexcept
+{
+	return m_consoleAttributesDefault;
+}
+
+WORD KeyConsole::getConsoleDefaultTextAttributes() const noexcept
+{
+	return m_consoleAttributesDefault;
 }
 
 bool KeyConsole::closeConsole()
@@ -266,17 +304,17 @@ bool KeyConsole::closeConsole()
 
 KeyConsole& KeyConsole::getInstance() noexcept 
 {
-	if ( ms_instance == nullptr )
+	if ( m_pInstance == nullptr )
 	{
-		ms_instance = new KeyConsole;
+		m_pInstance = new KeyConsole;
 	}
-	return *ms_instance;
+	return *m_pInstance;
 }
 
 void KeyConsole::resetInstance()
 {
-	if ( ms_instance != nullptr )
+	if ( m_pInstance != nullptr )
 	{
-		delete ms_instance;
+		delete m_pInstance;
 	}
 }

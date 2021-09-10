@@ -8,6 +8,12 @@ std::string printHresultErrorDescription( HRESULT hres )
 	return ws2s( error.ErrorMessage() );
 }
 
+std::wstring printHresultErrorDescriptionW( HRESULT hres )
+{
+	_com_error error{hres};
+	return error.ErrorMessage();
+}
+
 std::string getLastErrorAsString()
 {
 	//Get the error message, if any.
@@ -27,9 +33,8 @@ std::string getLastErrorAsString()
 		0,
 		nullptr );
 
-	std::string message( buff,
-		size );
-	LocalFree( buff) ;
+	std::string message{buff, size};
+	LocalFree( buff );
 	return message;
 }
 

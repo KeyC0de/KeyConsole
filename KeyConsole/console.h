@@ -1,7 +1,7 @@
 #pragma once
 
-#include "winner.h"
 #include <string>
+#include "winner.h"
 
 
 //============================================================
@@ -18,17 +18,19 @@
 class KeyConsole final
 {
 	static inline constexpr const char* currentVersion = "v0.4";
-	static inline constexpr const char* defaultConsoleTitle =
-		"KeyEngine Debug Console - ";
+	static inline constexpr const char* defaultConsoleTitle = "Debug Console - ";
 
 	FILE* m_fp;
 	std::string m_title;
-	DWORD m_con;			// HANDLE
+	DWORD m_stdDevice;
 	FILE* m_hMode;			// set this when you print/log/read to stdout/stderr/stdin
-	HANDLE m_stdHandle;		// the handle to the console
-	static inline KeyConsole* ms_instance;
+	HANDLE m_hConsole;
+	WORD m_consoleAttributesDefault;
+	WORD m_consoleAttributes;
+	static inline KeyConsole* m_pInstance;
 private:
 	KeyConsole( const std::string& fontName = "Lucida Console" );
+	bool setDefaultColor();
 public:
 	KeyConsole( const KeyConsole& rhs ) = delete;
 	KeyConsole& operator=( const KeyConsole& rhs ) = delete;
@@ -41,19 +43,24 @@ public:
 
 	static KeyConsole& getInstance() noexcept;
 	//===================================================
-	//	\function	~KeyConsole
-	//	\brief  you must call this prior to program termination to help the leaker checker
+	//	\function	resetInstance
+	//	\brief  you must call this manually prior to program exit to avoid memory leaks
 	//	\date	2020/12/30 22:19
 	static void resetInstance();
 		
 	int getConsoleMode() const noexcept;
 	std::string getConsoleModeStr() const noexcept;
+	// get current console's Code Page. for a list of code pages check link:
+	// https://docs.microsoft.com/el-gr/windows/desktop/Intl/code-page-identifiers
 	uint32_t getConsoleCodePage() const noexcept;
-	HANDLE getStdHandle() const noexcept;
+	HANDLE getHandle() const noexcept;
 
 	int32_t setConsoleCodePage( uint32_t cp );
 	void setFont( const std::string& fontName );
 	int32_t setCurcorPos( _COORD xy = {0,0} );
+	bool setColor( WORD attributes = FOREGROUND_RED | BACKGROUND_RED | BACKGROUND_GREEN );
+	WORD getConsoleTextAttributes() const noexcept;
+	WORD getConsoleDefaultTextAttributes() const noexcept;
 
 	//===================================================
 	//	\function	print

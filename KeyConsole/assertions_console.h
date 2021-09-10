@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined _DEBUG && !defined _NDEBUG
+#if defined _DEBUG && !defined NDEBUG
 
 #	ifdef __cplusplus
 extern "C" {
@@ -8,25 +8,32 @@ extern "C" {
 
 //#		define LSTR( expr ) L ## expr
 //#		define STRINGIFY( expr ) LSTR( #expr )
-#		define STRINGIFY( expr ) #expr
+#	define STRINGIFY( expr ) #expr
 extern bool assertPrint( const char* expr,
 	const char* file,
 	int line,
 	const char* function,
-	const char* msg );
+	const char* msg = "" );
 
 // assert that arg is true, if not print error
-#		define ASSERT( arg, msg ) (!(arg) \
+#	define ASSERT( arg, msg ) (!(arg) \
 			&& assertPrint( STRINGIFY( arg ),\
 				__FILE__,\
 				__LINE__,\
 				__FUNCTION__,\
 				msg ) )
+
+// assert with the optional argument not supplied
+#	define ASSERTO( arg ) (!(arg) \
+			&& assertPrint( STRINGIFY( arg ),\
+				__FILE__,\
+				__LINE__,\
+				__FUNCTION__) )
+
 #	ifdef __cplusplus
 }
 #	endif
 
 #else
-// Release
 #	define ASSERT( arg, msg ) void(0);
 #endif // _DEBUG

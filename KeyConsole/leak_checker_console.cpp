@@ -1,10 +1,4 @@
-#if defined(_DEBUG) || defined(DEBUG) || defined(debug) || defined(_debug)
-
-// LNK2038	mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '2' doesn't match value '0' in main.obj
-// It means you're probably missing debug and release builds in libraries you include
-//#	define _ITERATOR_DEBUG_LEVEL 0		// disabled (for release builds)
-//#define _ITERATOR_DEBUG_LEVEL 1	// enabled (if _SECURE_SCL is defined)
-//#define _ITERATOR_DEBUG_LEVEL 2	// enabled (for debug builds)
+#if defined _DEBUG && !defined NDEBUG
 
 #	include "leak_checker_console.h"
 #	include "console.h"
@@ -12,13 +6,14 @@
 namespace debugLeak
 {
 
-class LeakChecker
+class LeakChecker final
 {
 public:
 	LeakChecker()
 	{
 		KeyConsole& console = KeyConsole::getInstance();
 		console.log( "Memory leak checker setup\n" );
+		OutputDebugStringW( L"Memory leak checker setup\n" );
 		setupLeakChecker();
 	}
 

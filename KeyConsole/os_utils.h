@@ -4,6 +4,7 @@
 
 // error printing
 std::string printHresultErrorDescription( HRESULT hres );
+std::wstring printHresultErrorDescriptionW( HRESULT hres );
 
 #define ASSERT_RETURN_HRES_IF_FAILED( hres ) if ( FAILED ( hres ) )\
 	{\
