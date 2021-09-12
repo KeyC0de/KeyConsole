@@ -21,50 +21,50 @@ static_assert( _MSVC_LANG >= 201703L,
 #define NTDDI_VERSION NTDDI_WINBLUE
 #include <sdkddkver.h>
 
-#ifndef USE_GDIPLUS
 // defines to get rid of superfluous Windows functionality
 // However GDI+ requires all the functionality that is disabled by these switches
-#	define WIN32_LEAN_AND_MEAN		// Cryptography, DDE, RPC, Shell, MCI, Windows Sockets
-#	define NOGDICAPMASKS			// CC_*, LC_*, PC_*, CP_*, TC_*, RC_
-#	define NOMENUS					// MF_*
-#	define NOSYSCOMMANDS			// SC_*
-#	define NORASTEROPS				// Binary and Tertiary raster ops
-#	define OEMRESOURCE				// OEM Resource values
-#	define NOATOM					// Atom manager routines
-#	define NOCLIPBOARD				// Clipboard routines
-#	define NOCOLOR					// Screen colors
+//#	define WIN32_LEAN_AND_MEAN		// Cryptography, DDE, RPC, Shell, MCI, Windows Sockets
+#define NOGDICAPMASKS			// CC_*, LC_*, PC_*, CP_*, TC_*, RC_
+#define NOMENUS					// MF_*
+#define NOSYSCOMMANDS			// SC_*
+#define NORASTEROPS				// Binary and Tertiary raster ops
+#define OEMRESOURCE				// OEM Resource values
+#define NOATOM					// Atom manager routines
+#define NOCLIPBOARD				// Clipboard routines
+#define NOCOLOR					// Screen colors
 #ifdef NO_DUMPS
 #	define NOCTLMGR					// Control and Dialog routines, generating dumps
 #endif // !TAKING_DUMPS
-#	define NODRAWTEXT				// DrawText() and DT_*
-#	define NOKERNEL					// KERNEL macros and routines
-#	define NOMEMMGR					// GMEM_*, LMEM_*, GHND, LHND, associated routines
-#	define NOMETAFILE				// typedef METAFILEPICT
-#	define NOOPENFILE				// OpenFile(), OemToAnsi, AnsiToOem, and OF_*
-#	define NOSCROLL					// SB_* and scrolling routines
-#	define NOSERVICE				// All SERVICE_ Controller routines
-#	define NOIMAGE					// 
-#	define NOWH						// SetWindowsHook and WH_*
-#	define NOCOMM					// No serial communication API & driver routines
-#	define NOKANJI					// Kanji support
-#	define NOHELP					// Help engine interface
-#	define NODEFERWINDOWPOS			// DeferWindowPos routines
-#	define NOMCX					// Modem Configuration Extensions
-#	define NORPC					// no Remote Procedure Call Routines
-#	define NOPROXYSTUB				// not use Proxies, nor Stubs (for DLLs)
-#	define NOIMM					// no Input Method Manager
-#	define NOMCX					// no Media Center Extender (for xBox)
-#	define NOTAPE					// no Tape
-#	if defined NDEBUG || !defined _DEBUG 
-#		define NOPROFILER			// Profiler interface
-#	endif // NDEBUG
-#endif
+#define NODRAWTEXT				// DrawText() and DT_*
+#define NOKERNEL					// KERNEL macros and routines
+#define NOMEMMGR					// GMEM_*, LMEM_*, GHND, LHND, associated routines
+#define NOMETAFILE				// typedef METAFILEPICT
+#define NOOPENFILE				// OpenFile(), OemToAnsi, AnsiToOem, and OF_*
+#define NOSCROLL					// SB_* and scrolling routines
+#define NOSERVICE				// All SERVICE_ Controller routines
+#define NOIMAGE					// 
+#define NOWH						// SetWindowsHook and WH_*
+#define NOCOMM					// No serial communication API & driver routines
+#define NOKANJI					// Kanji support
+#define NOHELP					// Help engine interface
+#define NODEFERWINDOWPOS			// DeferWindowPos routines
+#define NOMCX					// Modem Configuration Extensions
+#define NORPC					// no Remote Procedure Call Routines
+#define NOPROXYSTUB				// not use Proxies, nor Stubs (for DLLs)
+#define NOIMM					// no Input Method Manager
+#define NOMCX					// no Media Center Extender (for xBox)
+#define NOTAPE					// no Tape
+#if defined NDEBUG || !defined _DEBUG 
+#	define NOPROFILER			// Profiler interface
+#endif // NDEBUG
 
+#ifndef USE_GDIPLUS
+#	define NOGDI					// All GDI defines and routines
+#endif
 //#	define NOVIRTUALKEYCODES		// VK_*
 //#	define NOWINMESSAGES			// WM_*, EM_*, LB_*, CB_*
 //#	define NOWINSTYLES				// WS_*, CS_*, ES_*, LBS_*, SBS_*, CBS_*
 //#	define NOSYSMETRICS				// SM_*
-//#	define NOGDI					// All GDI defines and routines
 //#	define NOUSER					// All USER defines and routines
 //#	define NOICONS					// IDI_*
 //#	define NOKEYSTATES				// MK_*
