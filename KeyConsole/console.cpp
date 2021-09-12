@@ -3,6 +3,29 @@
 #include "os_utils.h"
 #include "utils.h"
 
+#ifdef NOGDI
+# define LF_FACESIZE		32
+#define FF_DONTCARE         (0<<4)
+#define FW_NORMAL           400
+typedef struct _CONSOLE_FONT_INFOEX
+{
+	ULONG cbSize;
+	DWORD nFont;
+	COORD dwFontSize;
+	UINT  FontFamily;
+	UINT  FontWeight;
+	WCHAR FaceName[LF_FACESIZE];
+} CONSOLE_FONT_INFOEX, *PCONSOLE_FONT_INFOEX;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+BOOL WINAPI SetCurrentConsoleFontEx( HANDLE hConsoleOutput, BOOL bMaximumWindow, PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx );
+#ifdef __cplusplus
+}
+#endif
+#endif // NOGDI
+
 
 DWORD KeyConsole::getFontFamily( HANDLE h )
 {
@@ -228,12 +251,11 @@ void KeyConsole::setFont( const std::string& fontName )
 	cfie.dwFontSize.Y = 14;
 	cfie.FontFamily = FF_DONTCARE;
 	cfie.FontWeight = FW_NORMAL;
-	wcscpy_s( cfie.FaceName,
+	wcscpy( cfie.FaceName,
 		s2ws( fontName ).data() );
 	SetCurrentConsoleFontEx( m_hConsole,
 		false,
 		&cfie );
-
 	getConsoleInfo( m_hConsole );
 }
 
