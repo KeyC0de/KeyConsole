@@ -3,6 +3,7 @@
 #	include "leak_checker_console.h"
 #	include "console.h"
 
+
 namespace debugLeak
 {
 

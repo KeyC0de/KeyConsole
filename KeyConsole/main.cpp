@@ -1,8 +1,5 @@
 #include <iostream>
 #include "console.h"
-#if defined _DEBUG && !defined NDEBUG
-#	include <vld.h>
-#endif
 
 #pragma comment( linker, "/SUBSYSTEM:WINDOWS" )
 
@@ -40,5 +37,8 @@ Whatever man. Console output works.\n" );
 	console.print( "Console mode is: " + console.getConsoleModeStr() + '\n');
 
 	console.resetInstance();
-	return 0;
+#if defined _DEBUG && !defined NDEBUG
+	while ( !getchar() );
+#endif
+	return EXIT_SUCCESS;
 }

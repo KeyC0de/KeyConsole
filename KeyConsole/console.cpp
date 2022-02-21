@@ -104,9 +104,6 @@ KeyConsole::KeyConsole( const std::string& fontName )
 	// - post Windows Vista only
 	setFont( fontName );
 
-	// 5. set file stream translation mode
-	std::ios_base::sync_with_stdio( false );
-
 	print( "Console attributes set.\n" );
 	print( "Console mode set to " + getConsoleModeStr() + '\n' );
 	print( "Console ready.\n\n" );
@@ -264,7 +261,6 @@ int32_t KeyConsole::setCurcorPos( _COORD xy /* = { 0,0 } */ )
 	return SetConsoleCursorPosition( m_hConsole,
 		xy );
 }
-
 
 bool KeyConsole::setDefaultColor()
 {
